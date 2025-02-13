@@ -49,7 +49,7 @@ jobs:
       - name: Build and push Docker images
         run: |
           pwd
+          cd .. # <--  Entra na pasta do back-end
           ll -la 
-          # <--  Entra na pasta do back-end
           docker compose build
           docker compose push  
