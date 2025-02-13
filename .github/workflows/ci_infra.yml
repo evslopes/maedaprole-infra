@@ -48,6 +48,6 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          cd maedaprole-backend  # <--  Entra na pasta do back-end
+          cd maedaprole-infra  # <--  Entra na pasta do back-end
           docker compose build
           docker compose push  
