@@ -4,7 +4,8 @@ Este repositório contém a configuração de infraestrutura para o projeto Mae 
 
 ## Estrutura do Repositório
 
-```maedaprole-infra/ ├── docker-compose.yml # Arquivo de configuração do Docker Compose └── .github/ └── workflows/ └── ci.yml # Workflow do GitHub Actions para CI/CD```
+```maedaprole-infra/ ├── docker-compose.yml # Arquivo de configuração do Docker Compose └── .github/ └── workflows/ └── ci.yml # Workflow do GitHub Actions para CI/CD
+````
 
 ## Serviços
 
