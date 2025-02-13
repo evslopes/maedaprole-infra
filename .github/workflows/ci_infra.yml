@@ -26,12 +26,18 @@ jobs:
           path: maedaprole-infra/maedaprole-backend
           token: ${{ secrets.GH_TOKEN }}
 
+      - name: List backend directory
+        run: ls -R maedaprole-infra/maedaprole-backend
+
       - name: Checkout frontend code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-frontend
           path: maedaprole-infra/maedaprole-frontend
           token: ${{ secrets.GH_TOKEN }}
+
+      - name: List frontend directory
+        run: ls -R maedaprole-infra/maedaprole-frontend
 
       - name: Checkout CMS code
         uses: actions/checkout@v4
@@ -40,8 +46,8 @@ jobs:
           path: maedaprole-infra/maedaprole-cms
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: List directories
-        run: ls -R maedaprole-infra
+      - name: List CMS directory
+        run: ls -R maedaprole-infra/maedaprole-cms
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
