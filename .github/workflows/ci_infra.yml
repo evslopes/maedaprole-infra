@@ -23,19 +23,19 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: evslopes/maedaprole-backend
-        path: maedaprole-backend
+        path: ../maedaprole-backend
 
     - name: Checkout frontend code
       uses: actions/checkout@v4
       with:
         repository: evslopes/maedaprole-frontend
-        path: maedaprole-frontend
+        path: ../maedaprole-frontend
 
     - name: Checkout CMS code
       uses: actions/checkout@v4
       with:
         repository: evslopes/maedaprole-cms
-        path: maedaprole-cms
+        path: ../maedaprole-cms
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
