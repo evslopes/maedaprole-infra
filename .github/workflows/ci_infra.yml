@@ -18,6 +18,12 @@ jobs:
     steps:
       - name: Checkout infra code
         uses: actions/checkout@v4
+        with:
+          repository: evslopes/maedaprole-infra
+          path: maedaprole-infra
+
+      - name: List infra directory
+        run: ls -R maedaprole-infra
 
       - name: Checkout backend code
         uses: actions/checkout@v4
