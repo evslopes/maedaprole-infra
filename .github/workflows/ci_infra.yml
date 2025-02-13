@@ -50,6 +50,6 @@ jobs:
         run: |
           pwd
           cd .. # <--  Entra na pasta do back-end
-          ll -la 
+          ls -la 
           docker compose build
           docker compose push  
