@@ -40,6 +40,9 @@ jobs:
           path: maedaprole-infra/maedaprole-cms
           token: ${{ secrets.GH_TOKEN }}
 
+      - name: List directories
+        run: ls -R maedaprole-infra
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
