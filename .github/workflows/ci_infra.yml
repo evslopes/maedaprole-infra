@@ -23,31 +23,31 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-backend
-          path: maedaprole-infra/maedaprole-backend
+          path: maedaprole-backend
           token: ${{ secrets.GH_TOKEN }}
 
       - name: List backend directory
-        run: ls -R maedaprole-infra/maedaprole-backend
+        run: ls -R maedaprole-backend
 
       - name: Checkout frontend code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-frontend
-          path: maedaprole-infra/maedaprole-frontend
+          path: maedaprole-frontend
           token: ${{ secrets.GH_TOKEN }}
 
       - name: List frontend directory
-        run: ls -R maedaprole-infra/maedaprole-frontend
+        run: ls -R maedaprole-frontend
 
       - name: Checkout CMS code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-cms
-          path: maedaprole-infra/maedaprole-cms
+          path: maedaprole-cms
           token: ${{ secrets.GH_TOKEN }}
 
       - name: List CMS directory
-        run: ls -R maedaprole-infra/maedaprole-cms
+        run: ls -R maedaprole-cms
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -64,6 +64,5 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          cd maedaprole-infra
           docker compose build
           docker compose push
