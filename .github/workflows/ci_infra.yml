@@ -72,4 +72,4 @@ jobs:
         run: |
           docker compose build
           docker compose push
-          working-directory: ./maedaprole-infra/maedaprole-backend
+          working-directory: ./maedaprole-infra
