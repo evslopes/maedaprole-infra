@@ -4,6 +4,7 @@ Este repositório contém a configuração de infraestrutura para o projeto Mae 
 
 ## Estrutura do Repositório
 
+
 ```plaintext
 projetos-mae-da-prole/
 ├── maedaprole-backend/     # Repositório do Spring Boot
@@ -34,7 +35,6 @@ projetos-mae-da-prole/
             └── ci.yml      
 
 # Workflow do GitHub Actions para CI/CD
-````
 
 ## Serviços
 
