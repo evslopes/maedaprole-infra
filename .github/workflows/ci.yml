@@ -14,22 +14,22 @@ jobs:
 
     steps:
     - name: Checkout infra code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Checkout backend code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: evslopes/maedaprole-backend
         path: maedaprole-infra/maedaprole-backend
 
     - name: Checkout frontend code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: evslopes/maedaprole-frontend
         path: maedaprole-infra/maedaprole-frontend
 
     - name: Checkout CMS code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: evslopes/maedaprole-cms
         path: maedaprole-infra/maedaprole-cms
