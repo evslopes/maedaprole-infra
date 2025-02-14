@@ -3,7 +3,7 @@ name: Infra CI/CD
 on:
   push:
     branches:
-      - main
+      - main  # Executa em pushes na main (ou na sua branch principal)
   pull_request:
     branches:
       - main
@@ -12,55 +12,39 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  deploy:  # Nome do job (você pode ter vários jobs, ex: build, test, deploy)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout infra code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # Checkout do repositório de INFRAESTRUTURA
 
       - name: Checkout backend code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-backend
-          path: ../maedaprole-backend
+          path: maedaprole-backend  #  <--  Diretório relativo à raiz do repositório de infra
           token: ${{ secrets.GH_TOKEN }}
-
-      - name: List backend directory
-        run: ls -R ../maedaprole-backend
 
       - name: Checkout frontend code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-frontend
-          path: ../maedaprole-frontend
+          path: maedaprole-frontend  # <--  Diretório relativo
           token: ${{ secrets.GH_TOKEN }}
-
-      - name: List frontend directory
-        run: ls -R ../maedaprole-frontend
 
       - name: Checkout CMS code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-cms
-          path: ../maedaprole-cms
+          path: maedaprole-cms  # <--  Diretório relativo
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: List CMS directory
-        run: ls -R ../maedaprole-cms
+      - name: Set up Docker Buildx  # <--  Use a versão mais recente
+        uses: docker/setup-buildx-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Log in to Docker Hub
+      - name: Log in to Docker Hub  # Só se for fazer push
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Build and push Docker images
         run: |
@@ -72,4 +56,4 @@ jobs:
           docker compose build
           echo "Pushing Docker images:"
           docker compose push
-        working-directory: ..
+        working-directory: ../  # <--  Diretório relativo à raiz do repositório de infra
