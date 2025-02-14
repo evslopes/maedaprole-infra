@@ -1,0 +1,20 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform/
+
+# Diretórios de dependências
+node_modules/
+.yarn/
+.yarnrc.yml
+
+# Arquivos de configuração de ambiente
+.env
