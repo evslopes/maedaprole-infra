@@ -48,8 +48,11 @@ jobs:
 
       - name: Build and push Docker images
         run: |
+          echo "Current directory:"
           pwd
-          cd .. # <--  Entra na pasta do back-end
-          ls -la 
+          echo "Listing files in the current directory:"
+          ls -la
+          echo "Building Docker images:"
           docker compose build
-          docker compose push  
+          echo "Pushing Docker images:"
+          docker compose push
