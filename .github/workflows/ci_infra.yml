@@ -48,11 +48,9 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Listing files in the current directory:"
-          ls -la
-          echo "Building Docker images:"
           docker compose build
-          echo "Pushing Docker images:"
-          docker compose push
+          docker compose: actions/checkout@v4
+          with:
+          repository push
+          working-directory: ./maed: evslopes/
+          path: maedaprole-infra/
