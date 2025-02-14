@@ -56,4 +56,4 @@ jobs:
           docker compose build
           echo "Pushing Docker images:"
           docker compose push
-        working-directory: ../maedaprole-infra
+        working-directory: ../
