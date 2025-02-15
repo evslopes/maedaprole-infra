@@ -1,9 +1,9 @@
-name: Infra CI
+name: Infra CI/CD
 
 on:
   push:
     branches:
-      - main
+      - main  # Executa em pushes na main (ou na sua branch principal)
   pull_request:
     branches:
       - main
@@ -12,12 +12,34 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  terraform:  # Nome do job
+    name: 'Terraform'
     runs-on: ubuntu-latest
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
     steps:
-      - name: Checkout Infra Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5  # Use a versão mais recente e estável do Terraform
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Só aplica na main, em push
+        run: terraform apply -auto-approve tfplan
+        # Remova o -auto-approve para aprovação MANUAL do deploy (recomendado para produção!)
 
       - name: Checkout Backend Code
         uses: actions/checkout@v4
@@ -39,33 +61,36 @@ jobs:
           repository: evslopes/maedaprole-cms
           path: ../maedaprole-cms
           token: ${{ secrets.GH_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub  # Somente se for fazer push
-        if: github.ref == 'refs/heads/main'
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Build Docker Images
+      - name: Build do projeto backend
         run: |
-          docker compose build  # Executa o build a partir da raiz do repositório de infra
-          # docker compose push   # Descomente para fazer push (após o build)
+          cd ../maedaprole-backend
+          ./mvnw clean package -DskipTests
 
-    # Exemplo de como adicionar o deploy no Heroku DEPOIS que o build funcionar.
-    # (Opcional) Deploy no Heroku (backend)
-    #- name: Deploy to Heroku (backend)
-    #  uses: akhileshns/heroku-deploy@v3.12.14
-    #  with:
-    #    heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-    #    heroku_app_name: "seu-app-backend"  # Substitua
-    #    heroku_email: "[email protected]"
-    #    appdir: "../maedaprole-backend"
+      - name: Build do projeto frontend
+        run: |
+          cd ../maedaprole-frontend
+          npm install
+          npm run build
 
-    #Exemplo de deploy do Strapi no Heroku (usando o Heroku Container Registry)
-    #- name: Deploy Strapi CMS to Heroku
-    #  run: |
-    #      cd ../maedaprole-cms
-    #      heroku container:login
-    #      heroku container:push web -a <nome-do-seu-app-strapi-no-heroku>
-    #      heroku container:release web -a <nome-do-seu-app-strapi-no-heroku>
+      - name: Build projeto CMS
+        run: |
+          cd ../maedaprole-cms
+          npm install
+          npm run build
+
+      - name: Deploy no Heroku (backend)
+        uses: akhileshns/heroku-deploy@v3.12.14 #Mantenha a versão mais atual
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ vars.APP_NAME_BACKEND }}  # Usando variável do repositório
+          heroku_email: ${{ vars.HEROKU_EMAIL }} # Usando variável do repositório
+          appdir: "../maedaprole-backend" #  <--  Pasta onde está o código do back-end, *relativa* à pasta da infra
+          dockerfile: Dockerfile
+
+      # Deploy do Strapi no Heroku (usando o Heroku Container Registry)
+      - name: Deploy Strapi CMS to Heroku
+        run: |
+          cd ../maedaprole-cms
+          heroku container:login
+          heroku container:push web -a ${{ vars.APP_NAME_CMS }}
+          heroku container:release web -a ${{ vars.APP_NAME_CMS }}

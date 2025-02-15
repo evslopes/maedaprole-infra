@@ -58,7 +58,10 @@ services:
       JWT_SECRET: gdnQ4ifN72w2eAF6Md2Sm1WoCSpoGGHbm+EKZin0AGY=
 
     volumes:
-      - ./strapi:/srv/app
+      - ../maedaprole-cms/config:/srv/app/config  # <-- Caminhos corretos (v4)
+      - ../maedaprole-cms/public/uploads:/srv/app/public/uploads
+      - ../maedaprole-cms/data:/srv/app/data
+      - ../maedaprole-cms/src:/srv/app/src #Para hot reload
     depends_on:
       - postgres
     networks:
@@ -77,6 +80,7 @@ services:
       - ../maedaprole-frontend:/app
     depends_on:
       - backend
+      - strapi
     networks:
       - maedaprole_network
 
