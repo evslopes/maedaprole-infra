@@ -12,59 +12,42 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  build-and-push:  # Um único job por enquanto
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout infra code
+      - name: Checkout Infra Code
         uses: actions/checkout@v4
 
-      - name: Checkout backend code
+      - name: Checkout Backend Code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-backend
-          path: maedaprole-backend # Caminho relativo CORRETO, sem ../
+          path: maedaprole-backend  # Caminho relativo, SEM ../
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Checkout frontend code
+      - name: Checkout Frontend Code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-frontend
-          path: maedaprole-frontend # Caminho relativo CORRETO, sem ../
+          path: maedaprole-frontend  # Caminho relativo, SEM ../
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Checkout CMS code
+      - name: Checkout CMS Code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-cms
-          path: maedaprole-cms # Caminho relativo CORRETO, sem ../
+          path: maedaprole-cms  # Caminho relativo, SEM ../
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub  # Só se for fazer push para o Docker Hub
-        if: github.ref == 'refs/heads/main'
+      - name: Log in to Docker Hub  # Opcional, se for fazer push
+        if: github.ref == 'refs/heads/main'  # Só na main
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build and push Docker images
         run: |
-          cd ../maedaprole-backend #Navega para a pasta do backend
-          docker compose build
-          # docker compose push  # Só descomente se for fazer push para o Docker Hub
-
-    # (Opcional) Deploy no Heroku (exemplo - precisa de uma Action específica)
-    # - name: Deploy to Heroku (backend)
-    #   uses: akhileshns/heroku-deploy@v3.12.14  # Use uma versão mais recente!
-    #   with:
-    #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-    #     heroku_app_name: "seu-app-backend"  # Substitua pelo nome do seu app do back-end no Heroku
-    #     heroku_email: "[email protected]"  # Seu e-mail do Heroku
-    #     appdir: "../maedaprole-backend" #  <--  Pasta onde está o código do back-end, *relativa* à pasta da infra
-
-    #Exemplo de deploy do Strapi no Heroku (usando o Heroku Container Registry)
-    #- name: Deploy Strapi CMS to Heroku
-    #  run: |
-    #      cd ../maedaprole-cms
-    #      heroku container:login
-    #      heroku container:push web -a <nome-do-seu-app-strapi-no-heroku>
-    #      heroku container:release web -a <nome-do-seu-app-strapi-no-heroku>
+          docker compose build  # Executa na raiz do repositório de infra
+          # docker compose push    # Descomente se for fazer push
