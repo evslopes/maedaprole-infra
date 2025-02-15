@@ -3,29 +3,29 @@ name: Infra CI/CD
 on:
   push:
     branches:
-      - main  # Executa em pushes na main (ou na sua branch principal)
+      - main
   pull_request:
     branches:
       - main
-
 permissions:
   contents: read
 
 jobs:
-  terraform:  # Nome do job
-    name: 'Terraform'
+  terraform:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.7.5  # Use a versão mais recente e estável do Terraform
+          terraform_version: 1.7.5
 
       - name: Terraform Init
         run: terraform init
@@ -34,63 +34,41 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
+        run: terraform plan -var-file="terraform.tfvars" -out=tfplan #Aponta para o arquivo
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Só aplica na main, em push
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
-        # Remova o -auto-approve para aprovação MANUAL do deploy (recomendado para produção!)
 
-      - name: Checkout Backend Code
+      - name: Checkout backend code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-backend
           path: ../maedaprole-backend
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Checkout Frontend Code
+      - name: Checkout frontend code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-frontend
           path: ../maedaprole-frontend
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Checkout CMS Code
+      - name: Checkout CMS code
         uses: actions/checkout@v4
         with:
           repository: evslopes/maedaprole-cms
           path: ../maedaprole-cms
           token: ${{ secrets.GH_TOKEN }}
-      - name: Build do projeto backend
-        run: |
-          cd ../maedaprole-backend
-          ./mvnw clean package -DskipTests
 
-      - name: Build do projeto frontend
-        run: |
-          cd ../maedaprole-frontend
-          npm install
-          npm run build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build projeto CMS
-        run: |
-          cd ../maedaprole-cms
-          npm install
-          npm run build
+      - name: Log in to Docker Hub
+        if: github.ref == 'refs/heads/main'
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Deploy no Heroku (backend)
-        uses: akhileshns/heroku-deploy@v3.12.14 #Mantenha a versão mais atual
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ vars.APP_NAME_BACKEND }}  # Usando variável do repositório
-          heroku_email: ${{ vars.HEROKU_EMAIL }} # Usando variável do repositório
-          appdir: "../maedaprole-backend" #  <--  Pasta onde está o código do back-end, *relativa* à pasta da infra
-          dockerfile: Dockerfile
-
-      # Deploy do Strapi no Heroku (usando o Heroku Container Registry)
-      - name: Deploy Strapi CMS to Heroku
+      - name: Build and push Docker images
         run: |
-          cd ../maedaprole-cms
-          heroku container:login
-          heroku container:push web -a ${{ vars.APP_NAME_CMS }}
-          heroku container:release web -a ${{ vars.APP_NAME_CMS }}
+          docker compose build
+          #docker compose push
