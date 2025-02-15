@@ -12,24 +12,24 @@ provider "heroku" {}
 # --- Back-end (Spring Boot) ---
 
 resource "heroku_app" "backend" {
-  name   = "maedaprole-backend-app"  # SUBSTITUA por um nome ÚNICO no Heroku!
+  name = "maedaprole-backend-app"  # SUBSTITUA por um nome ÚNICO no Heroku!
   region = "us"
 }
 
 resource "heroku_addon" "backend_postgres" {
-  app_id  = heroku_app.backend.id
-  plan    = "heroku-postgresql:hobby-dev"
+  app_id = heroku_app.backend.id
+  plan   = "heroku-postgresql:hobby-dev"
 }
 
 # --- Strapi ---
 
 resource "heroku_app" "strapi" {
-  name   = "maedaprole-cms-app"  # SUBSTITUA por um nome ÚNICO no Heroku!
+  name = "maedaprole-cms-app"  # SUBSTITUA por um nome ÚNICO no Heroku!
   region = "us"
 }
 
 resource "heroku_addon" "strapi_postgres" {
-  app_id  = heroku_app.strapi.id
+  app_id = heroku_app.strapi.id
   plan   = "heroku-postgresql:hobby-dev"
 }
 
@@ -52,13 +52,13 @@ resource "heroku_app_config_association" "strapi_env" {
   app_id = heroku_app.strapi.id
   # depends_on = [heroku_addon.strapi_postgres] # Não precisa, a dependência já está implícita
   vars = {
-    NODE_ENV      = "production"
-    DATABASE_URL  = heroku_addon.strapi_postgres.config_vars["DATABASE_URL"] # Usando a DATABASE_URL diretamente
-    HOST          = "0.0.0.0"
-    APP_KEYS      = var.app_keys  # Usando variáveis
-    API_TOKEN_SALT = var.api_token_salt
+    NODE_ENV         = "production"
+    DATABASE_URL     = heroku_addon.strapi_postgres.config_var_values["DATABASE_URL"]
+    HOST             = "0.0.0.0"
+    APP_KEYS = var.app_keys  # Usando variáveis
+    API_TOKEN_SALT   = var.api_token_salt
     ADMIN_JWT_SECRET = var.admin_jwt_secret
-    JWT_SECRET    = var.jwt_secret
+    JWT_SECRET       = var.jwt_secret
   }
 }
 
