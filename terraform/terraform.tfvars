@@ -1,0 +1,6 @@
+email_username = "seu_email_username"
+email_password = "seu_email_password"
+app_keys = "chaveSegura1,chaveSegura2,chaveSegura3,chaveSegura4"
+api_token_salt = "valorSeguroAleatorio"
+admin_jwt_secret = "valorSeguroAleatorioJWT"
+jwt_secret = "valorSeguroAleatorioJWT"

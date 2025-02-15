@@ -4,8 +4,37 @@ Este repositório contém a configuração de infraestrutura para o projeto Mae 
 
 ## Estrutura do Repositório
 
-```maedaprole-infra/ ├── docker-compose.yml # Arquivo de configuração do Docker Compose └── .github/ └── workflows/ └── ci.yml # Workflow do GitHub Actions para CI/CD
-````
+
+```plaintext
+projetos-mae-da-prole/
+├── maedaprole-backend/     # Repositório do Spring Boot
+│   ├── src/
+│   ├── pom.xml
+│   └── .github/
+│       └── workflows/
+│           └── ci.yml
+├── maedaprole-frontend/    # Repositório do Vue.js
+│   ├── src/
+│   ├── package.json
+│   └── .github/
+│       └── workflows/
+│           └── ci.yml
+├── maedaprole-cms/         # Projeto Strapi v5
+│   ├── config/
+│   ├── public/
+│   │   └── uploads/
+│   ├── data/        
+│   ├── package.json
+│   └── .github/
+│       └── workflows/
+│           └── ci.yml
+└── maedaprole-infra/       # Novo repositório para a  infraestrutura
+    ├── docker-compose.yml  # docker-compose.yml *centralizado* aqui
+    └── .github/
+        └── workflows/
+            └── ci.yml      
+
+# Workflow do GitHub Actions para CI/CD
 
 ## Serviços
 

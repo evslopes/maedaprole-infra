@@ -52,12 +52,16 @@ services:
       DATABASE_PASSWORD: dev_2025
       NODE_ENV: development
       HOST: 0.0.0.0
-      APP_KEYS: "chaveSegura1,chaveSegura2,chaveSegura3,chaveSegura4"
-      API_TOKEN_SALT: valorSeguroAleatorio
-      ADMIN_JWT_SECRET: valorSeguroAleatorioJWT
-      JWT_SECRET: valorSeguroAleatorioJWT
+      APP_KEYS: "1EmfuUuBnim9K/S6kNask6oPeCKc3S5cY5du7YBCl+A=,4C1Tp1jj3urYBMJb+ziqge/i7RQCc6u9Ef7ZjOGlApg=,gdnQ4ifN72w2eAF6Md2Sm1WoCSpoGGHbm+EKZin0AGY=,jK1lxzKgU7dCzw3d+VEqF+OsPpGQIm/qI5MvMdQL/Ag="
+      API_TOKEN_SALT: 1EmfuUuBnim9K/S6kNask6oPeCKc3S5cY5du7YBCl+A=
+      ADMIN_JWT_SECRET: 4C1Tp1jj3urYBMJb+ziqge/i7RQCc6u9Ef7ZjOGlApg=
+      JWT_SECRET: gdnQ4ifN72w2eAF6Md2Sm1WoCSpoGGHbm+EKZin0AGY=
+
     volumes:
-      - ./strapi:/srv/app
+      - ../maedaprole-cms/config:/srv/app/config  # <-- Caminhos corretos (v4)
+      - ../maedaprole-cms/public/uploads:/srv/app/public/uploads
+      - ../maedaprole-cms/data:/srv/app/data
+      - ../maedaprole-cms/src:/srv/app/src #Para hot reload
     depends_on:
       - postgres
     networks:
@@ -76,6 +80,7 @@ services:
       - ../maedaprole-frontend:/app
     depends_on:
       - backend
+      - strapi
     networks:
       - maedaprole_network
 
